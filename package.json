@@ -1,0 +1,41 @@
+{
+  "name": "jss-juris-crud-component",
+  "version": "1.0.0",
+  "description": "TypeScript package that extends Juris components to work with Jss and JssStore, providing CRUD components for Jss objects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prepublishOnly": "yarn build"
+  },
+  "keywords": [
+    "juris",
+    "jss",
+    "jss-store",
+    "crud",
+    "components",
+    "typescript",
+    "reactive",
+    "forms"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "jss-store": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {},
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JssJurisCrudComponent - Enhance API Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    
+    .form-field {
+      margin-bottom: 15px;
+    }
+    
+    .form-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .error {
+      color: #dc3545;
+      margin: 5px 0;
+    }
+    
+    .data-field {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    
+    dt {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    dd {
+      margin-left: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>JssJurisCrudComponent - Enhance API Example</h1>
+  
+  <h2>Create Component</h2>
+  <div id="create-component" JssStatePath="users.newUser">
+    <!-- This div will be enhanced by JssJurisCreateComponent -->
+  </div>
+  
+  <hr>
+  
+  <h2>Read Component</h2>
+  <div id="read-component" JssStatePath="users.john">
+    <!-- This div will be enhanced by JssJurisReadComponent -->
+  </div>
+  
+  <hr>
+  
+  <h2>Update Component</h2>
+  <div id="update-component" JssStatePath="users.john">
+    <!-- This div will be enhanced by JssJurisUpdateComponent -->
+  </div>
+  
+  <hr>
+  
+  <h2>Delete Component</h2>
+  <div id="delete-component" JssStatePath="users.john">
+    <!-- This div will be enhanced by JssJurisDeleteComponent -->
+  </div>
+
+  <script>
+    // Mock JssStore for demonstration
+    window.JssStore = new Proxy({}, {
+      get(target, prop) {
+        if (prop === 'has') {
+          return (path) => {
+            const parts = typeof path === 'string' ? path.split('.') : path;
+            let current = target;
+            for (const part of parts) {
+              if (!(part in current)) return false;
+              current = current[part];
+            }
+            return true;
+          };
+        }
+        
+        if (prop === 'delete') {
+          return (path) => {
+            const parts = typeof path === 'string' ? path.split('.') : path;
+            const lastPart = parts.pop();
+            let current = target;
+            for (const part of parts) {
+              if (!(part in current)) return;
+              current = current[part];
+            }
+            delete current[lastPart];
+          };
+        }
+        
+        if (!(prop in target)) {
+          target[prop] = new Proxy({}, this);
+        }
+        
+        return target[prop];
+      }
+    });
+    
+    // Initialize sample data
+    window.JssStore.users.john = {
+      id: '1',
+      name: 'John Doe',
+      email: 'john@example.com',
+      description: 'Sample user'
+    };
+    
+    console.log('JssStore initialized with sample data:', window.JssStore);
+  </script>
+  
+  <!-- Load Juris.js (placeholder - would be actual Juris.js library) -->
+  <script>
+    // Mock Juris for demonstration
+    window.Juris = class {
+      constructor(config) {
+        this.config = config;
+      }
+      
+      render(selector) {
+        console.log('Rendering Juris app to', selector);
+      }
+      
+      enhance(selector, config) {
+        console.log('Enhancing element', selector, 'with config', config);
+      }
+    };
+  </script>
+  
+  <!-- Load JssJurisCrudComponent -->
+  <script src="../dist/index.js"></script>
+  
+  <script>
+    // Example usage
+    const shaclUrl = './person-shape.ttl';
+    const crud = JssJurisCrudComponent.crud(shaclUrl);
+    
+    // Get components
+    const CreateComponent = crud.get_create_component();
+    const ReadComponent = crud.get_read_component();
+    const UpdateComponent = crud.get_update_component();
+    const DeleteComponent = crud.get_delete_component();
+    
+    // Initialize Juris app
+    const app = new Juris({
+      components: {
+        CreateComponent,
+        ReadComponent,
+        UpdateComponent,
+        DeleteComponent
+      }
+    });
+    
+    // Enhance existing DOM elements
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create component context mock
+      const createContext = (statePath) => ({
+        getState: (path, defaultValue) => {
+          // Mock state management
+          return defaultValue;
+        },
+        setState: (path, value) => {
+          console.log('Setting state:', path, '=', value);
+        }
+      });
+      
+      // Enhance create component
+      const createEl = document.getElementById('create-component');
+      if (createEl) {
+        const component = CreateComponent({}, createContext('create'));
+        if (component.enhance) {
+          component.enhance(createEl);
+        }
+      }
+      
+      // Enhance read component
+      const readEl = document.getElementById('read-component');
+      if (readEl) {
+        const component = ReadComponent({}, createContext('read'));
+        if (component.enhance) {
+          component.enhance(readEl);
+        }
+      }
+      
+      // Enhance update component
+      const updateEl = document.getElementById('update-component');
+      if (updateEl) {
+        const component = UpdateComponent({}, createContext('update'));
+        if (component.enhance) {
+          component.enhance(updateEl);
+        }
+      }
+      
+      // Enhance delete component
+      const deleteEl = document.getElementById('delete-component');
+      if (deleteEl) {
+        const component = DeleteComponent({}, createContext('delete'));
+        if (component.enhance) {
+          component.enhance(deleteEl);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

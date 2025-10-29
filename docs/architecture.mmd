@@ -1,0 +1,57 @@
+graph TB
+    subgraph "JssJurisCrudComponent Package"
+        Main[JssJurisCrudComponent]
+        Main --> CreateComp[JssJurisCreateComponent]
+        Main --> ReadComp[JssJurisReadComponent]
+        Main --> UpdateComp[JssJurisUpdateComponent]
+        Main --> DeleteComp[JssJurisDeleteComponent]
+        
+        CreateComp --> Base[BaseJurisCrudComponent]
+        ReadComp --> Base
+        UpdateComp --> Base
+        DeleteComp --> Base
+    end
+    
+    subgraph "External Dependencies"
+        JurisJS[Juris.js Framework]
+        JssStore[JssStore]
+        Jss[Jss Validator]
+        SHACL[SHACL Definition]
+    end
+    
+    subgraph "Component Features"
+        Enhance[enhance API]
+        Render[render Method]
+        Validation[SHACL Validation]
+        StateManagement[State Management]
+    end
+    
+    Main -.->|uses| JurisJS
+    Base -.->|integrates| JssStore
+    Base -.->|validates with| Jss
+    Jss -.->|loads| SHACL
+    
+    CreateComp --> Enhance
+    CreateComp --> Render
+    CreateComp --> Validation
+    CreateComp --> StateManagement
+    
+    ReadComp --> Enhance
+    ReadComp --> Render
+    ReadComp --> StateManagement
+    
+    UpdateComp --> Enhance
+    UpdateComp --> Render
+    UpdateComp --> Validation
+    UpdateComp --> StateManagement
+    
+    DeleteComp --> Enhance
+    DeleteComp --> Render
+    DeleteComp --> StateManagement
+    
+    style Main fill:#4a90e2,stroke:#2e5c8a,color:#fff
+    style CreateComp fill:#7cb342,stroke:#558b2f,color:#fff
+    style ReadComp fill:#ffa726,stroke:#f57c00,color:#fff
+    style UpdateComp fill:#ab47bc,stroke:#7b1fa2,color:#fff
+    style DeleteComp fill:#ef5350,stroke:#c62828,color:#fff
+    style Base fill:#78909c,stroke:#455a64,color:#fff
